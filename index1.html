@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="css/lightbox.css" rel="stylesheet" />
+    <script src="js/jquery-1.10.2.min.js"></script>
+
+    <script src="js/lightbox-2.6.min.js"></script>
+
+    <script src="js/three.min.js"></script>
+
+    <script src="js/tween.min.js"></script>
+
+    <script src="js/TrackballControls.js"></script>
+
+    <script src="js/CSS3DRenderer.js"></script>
+</head>
+
+<body>
+<div id="container"></div>
+<div id="menu">
+    <button id="table">照片墙</button>
+    <button id="sphere">水晶球</button>
+    <button id="helix">螺旋塔</button>
+    <button id="grid">展览厅</button>
+</div>
+</body>
+
+<script>
+  const locationMap = {
+    0: [0, 0],
+    1: [1, 0],
+    2: [2, 0],
+    3: [3, 0],
+    4: [4, 0],
+    5: [5, 0],
+    6: [6, 0],
+    7: [7, 0],
+    8: [8, 0],
+    9: [9, 0],
+    10: [0, 1],
+    11: [1, 1],
+    12: [2, 1],
+    13: [3, 1],
+    14: [4, 1],
+    15: [5, 1],
+    16: [6, 1],
+    17: [7, 1],
+    18: [8, 1],
+    19: [9, 1],
+    20: [0, 2],
+    21: [1, 2],
+    22: [2, 2],
+    23: [0, 3],
+    24: [1, 3],
+    25: [2, 3],
+    26: [0, 4],
+    27: [1, 4],
+    28: [2, 4],
+    29: [0, 5],
+    30: [1, 5],
+    31: [2, 5],
+    32: [0, 6],
+    33: [1, 6],
+    34: [2, 6],
+    //
+    35: [0, 7],
+    36: [1, 7],
+    37: [2, 7],
+    38: [3, 7],
+    39: [4, 7],
+    40: [5, 7],
+    41: [6, 7],
+    42: [7, 7],
+    43: [8, 7],
+    44: [9, 7],
+    //
+    45: [0, 8],
+    46: [1, 8],
+    47: [2, 8],
+    48: [3, 8],
+    49: [4, 8],
+    50: [5, 8],
+    51: [6, 8],
+    52: [7, 8],
+    53: [8, 8],
+    54: [9, 8],
+    //
+    55: [0, 9],
+    56: [1, 9],
+    57: [2, 9],
+    58: [3, 9],
+    59: [4, 9],
+    60: [5, 9],
+    61: [6, 9],
+    62: [7, 9],
+    63: [8, 9],
+    64: [9, 9],
+    //
+    65: [6, 10],
+    66: [7, 10],
+    67: [8, 10],
+    68: [9, 10],
+    //
+    69: [6, 11],
+    70: [7, 11],
+    71: [8, 11],
+    72: [9, 11],
+    //
+    73: [6, 12],
+    74: [7, 12],
+    75: [8, 12],
+    76: [9, 12],
+    //
+    77: [6, 13],
+    78: [7, 13],
+    79: [8, 13],
+    80: [9, 13],
+    //
+    81: [6, 14],
+    82: [7, 14],
+    83: [8, 14],
+    84: [9, 14],
+    //
+    85: [0, 15],
+    86: [1, 15],
+    87: [2, 15],
+    88: [3, 15],
+    89: [4, 15],
+    90: [5, 15],
+    91: [6, 15],
+    92: [7, 15],
+    93: [8, 15],
+    94: [9, 15],
+    //
+    95: [0, 16],
+    96: [1, 16],
+    97: [2, 16],
+    98: [3, 16],
+    99: [4, 16],
+    100: [5, 16],
+    101: [6, 16],
+    102: [7, 16],
+    103: [8, 16],
+    104: [9, 16],
+
+    //
+    105: [0, 17],
+    106: [1, 17],
+    107: [2, 17],
+    108: [3, 17],
+    109: [4, 17],
+    110: [5, 17],
+    111: [6, 17],
+    112: [7, 17],
+    113: [8, 17],
+    114: [9, 17],
+    //
+    115: [12, 0],
+    116: [12, 1],
+    117: [12, 2],
+    118: [12, 3],
+    119: [12, 4],
+    120: [12, 5],
+    121: [12, 6],
+    122: [12, 7],
+    123: [12, 8],
+    124: [12, 9],
+    125: [12, 10],
+    126: [12, 11],
+    127: [12, 12],
+    128: [12, 13],
+    129: [12, 14],
+    130: [12, 15],
+    131: [12, 16],
+
+    //
+    132: [13, 0],
+    133: [13, 1],
+    134: [13, 2],
+    135: [13, 3],
+    136: [13, 4],
+    137: [13, 5],
+    138: [13, 6],
+    139: [13, 7],
+    140: [13, 8],
+    141: [13, 9],
+    142: [13, 10],
+    143: [13, 11],
+    144: [13, 12],
+    145: [13, 13],
+    146: [13, 14],
+    147: [13, 15],
+    148: [13, 16],
+
+    //
+    149: [14, 0],
+    150: [15, 0],
+    151: [16, 0],
+    152: [17, 0],
+    153: [18, 0],
+    154: [19, 0],
+    //
+    155: [14, 1],
+    156: [15, 1],
+    157: [16, 1],
+    158: [17, 1],
+    159: [18, 1],
+    160: [19, 1],
+    //
+    161: [14, 16],
+    162: [15, 16],
+    163: [16, 16],
+    164: [17, 16],
+    165: [18, 16],
+    166: [19, 16],
+    //
+    167: [12, 17],
+    168: [13, 17],
+    169: [14, 17],
+    170: [15, 17],
+    171: [16, 17],
+    172: [17, 17],
+    173: [18, 17],
+    174: [19, 17],
+    //
+    175: [20, 0],
+    176: [20, 1],
+    177: [20, 2],
+    178: [20, 3],
+    179: [20, 4],
+    180: [20, 5],
+    181: [20, 6],
+    182: [20, 7],
+    183: [20, 8],
+    184: [20, 9],
+    185: [20, 10],
+    186: [20, 11],
+    187: [20, 12],
+    188: [20, 13],
+    189: [20, 14],
+    190: [20, 15],
+    191: [20, 16],
+    192: [20, 17],
+    //
+    193: [21, 0],
+    194: [21, 1],
+    195: [21, 2],
+    196: [21, 3],
+    197: [21, 4],
+    198: [21, 5],
+    199: [21, 6],
+    200: [21, 7],
+    201: [21, 8],
+    202: [21, 9],
+    203: [21, 10],
+    204: [21, 11],
+    205: [21, 12],
+    206: [21, 13],
+    207: [21, 14],
+    208: [21, 15],
+    209: [21, 16],
+    210: [21, 17],
+    //
+    211: [24, 0],
+    212: [24, 1],
+    213: [24, 2],
+    214: [24, 3],
+    215: [24, 4],
+    216: [24, 5],
+    217: [24, 6],
+    218: [24, 7],
+    219: [24, 8],
+    220: [24, 9],
+    221: [24, 10],
+    222: [24, 11],
+    223: [24, 12],
+    224: [24, 13],
+    225: [24, 14],
+    226: [24, 15],
+    227: [24, 16],
+    228: [24, 17],
+    //
+    229: [25, 0],
+    230: [25, 1],
+    231: [25, 2],
+    232: [25, 3],
+    233: [25, 4],
+    234: [25, 5],
+    235: [25, 6],
+    236: [25, 7],
+    237: [25, 8],
+    238: [25, 9],
+    239: [25, 10],
+    240: [25, 11],
+    241: [25, 12],
+    242: [25, 13],
+    243: [25, 14],
+    244: [25, 15],
+    245: [25, 16],
+    246: [25, 17],
+    //
+    247: [32, 0],
+    248: [32, 1],
+    249: [32, 2],
+    250: [32, 3],
+    251: [32, 4],
+    252: [32, 5],
+    253: [32, 6],
+    254: [32, 7],
+    255: [32, 8],
+    256: [32, 9],
+    257: [32, 10],
+    258: [32, 11],
+    259: [32, 12],
+    260: [32, 13],
+    261: [32, 14],
+    262: [32, 15],
+    263: [32, 16],
+    264: [32, 17],
+    //
+    265: [33, 0],
+    266: [33, 1],
+    267: [33, 2],
+    268: [33, 3],
+    269: [33, 4],
+    270: [33, 5],
+    271: [33, 6],
+    272: [33, 7],
+    273: [33, 8],
+    274: [33, 9],
+    275: [33, 10],
+    276: [33, 11],
+    277: [33, 12],
+    278: [33, 13],
+    279: [33, 14],
+    280: [33, 15],
+    281: [33, 16],
+    282: [33, 17],
+    //
+    283: [25, 0],
+    284: [26, 0],
+    285: [27, 0],
+    286: [28, 0],
+    287: [29, 0],
+    288: [30, 0],
+    289: [31, 0],
+    290: [32, 0],
+    //
+    291: [25, 1],
+    292: [26, 1],
+    293: [27, 1],
+    294: [28, 1],
+    295: [29, 1],
+    296: [30, 1],
+    297: [31, 1],
+    298: [32, 1],
+    //
+    299: [25, 16],
+    300: [26, 16],
+    301: [27, 16],
+    302: [28, 16],
+    303: [29, 16],
+    304: [30, 16],
+    305: [31, 16],
+    306: [32, 16],
+    //
+    307: [25, 17],
+    308: [26, 17],
+    309: [27, 17],
+    310: [28, 17],
+    311: [29, 17],
+    312: [30, 17],
+    313: [31, 17],
+    314: [32, 17],
+  }
+  const imgLength = Object.keys(locationMap).length
+  //建议值[18,6]
+  let table = [];
+
+  let camera, scene, renderer;
+  let controls;
+
+  let objects = [];
+  let targets = { table: [], sphere: [], helix: [], grid: [] };
+  isBrowser();
+  getImgs();
+  init();
+  animate();
+
+  function init() {
+
+    camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
+    camera.position.z = 3000;
+
+    scene = new THREE.Scene();
+
+
+    for (let i = 0; i < table.length; i++) {
+
+      let element = document.createElement('div');
+      element.className = 'element';
+      element.style.backgroundColor = 'rgba(0,127,127,' + (Math.random() * 0.5 + 0.25) + ')';
+
+      let a = document.createElement('a');
+      a.href = table[i][0];
+      a.setAttribute('data-lightbox', 'roadtrip');
+      a.setAttribute('title', a.href.substr(a.href.lastIndexOf('/') + 1));
+
+      let image = new Image();
+      image.src = table[i][0];
+
+      a.appendChild(image)
+
+      element.appendChild(a);
+
+      let object = new THREE.CSS3DObject(element);
+      object.position.x = Math.random() * 4000 - 2000;
+      object.position.y = Math.random() * 4000 - 2000;
+      object.position.z = Math.random() * 4000 - 2000;
+      scene.add(object);
+
+      objects.push(object);
+
+      object = new THREE.Object3D();
+      // object.position.x = (table[i][1] * 100) - 1330;
+      // object.position.y = - (table[i][2] * 120);
+
+      object.position.x = (table[i][1] * 140) - 1030;
+      object.position.y = - (table[i][2] * 180) + 1090;
+      targets.table.push(object);
+
+      image.addEventListener('load', function (event) {
+        resizeImg(this, 120, 160);
+      }, false);
+
+    }
+
+    // sphere
+
+    let vector = new THREE.Vector3();
+
+    for (let i = 0, l = objects.length; i < l; i++) {
+
+      let phi = Math.acos(-1 + (2 * i) / l);
+      let theta = Math.sqrt(l * Math.PI) * phi;
+
+      let object = new THREE.Object3D();
+
+      object.position.x = 800 * Math.cos(theta) * Math.sin(phi);
+      object.position.y = 800 * Math.sin(theta) * Math.sin(phi);
+      object.position.z = 800 * Math.cos(phi);
+
+      vector.copy(object.position).multiplyScalar(2);
+
+      object.lookAt(vector);
+
+      targets.sphere.push(object);
+
+    }
+
+    // helix
+
+    vector = new THREE.Vector3();
+
+    for (let i = 0, l = objects.length; i < l; i++) {
+
+      let phi = i * 0.175 + Math.PI;
+
+      let object = new THREE.Object3D();
+
+      object.position.x = 900 * Math.sin(phi);
+      object.position.y = - (i * 8) + 450;
+      object.position.z = 900 * Math.cos(phi);
+
+      vector.x = object.position.x * 2;
+      vector.y = object.position.y;
+      vector.z = object.position.z * 2;
+
+      object.lookAt(vector);
+
+      targets.helix.push(object);
+
+    }
+
+    // grid
+
+    for (let i = 0; i < objects.length; i++) {
+
+      let object = new THREE.Object3D();
+
+      object.position.x = ((i % 5) * 400) - 800;
+      object.position.y = (- (Math.floor(i / 5) % 5) * 400) + 800;
+      object.position.z = (Math.floor(i / 25)) * 1000 - 2000;
+
+      targets.grid.push(object);
+
+    }
+
+    //
+
+    renderer = new THREE.CSS3DRenderer();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.domElement.style.position = 'absolute';
+    document.getElementById('container').appendChild(renderer.domElement);
+
+    //
+
+    controls = new THREE.TrackballControls(camera, renderer.domElement);
+    controls.rotateSpeed = 0.5;
+    controls.minDistance = 500;
+    controls.maxDistance = 6000;
+    controls.addEventListener('change', render);
+
+    let button = document.getElementById('table');
+    button.addEventListener('click', function (event) {
+
+      transform(targets.table, 2000);
+
+    }, false);
+
+    button = document.getElementById('sphere');
+    button.addEventListener('click', function (event) {
+
+      transform(targets.sphere, 2000);
+
+    }, false);
+
+    button = document.getElementById('helix');
+    button.addEventListener('click', function (event) {
+
+      transform(targets.helix, 2000);
+
+    }, false);
+
+    button = document.getElementById('grid');
+    button.addEventListener('click', function (event) {
+
+      transform(targets.grid, 2000);
+
+    }, false);
+
+    transform(targets.table, 5000);
+    //transform( targets.helix, 2000 );
+    //
+
+    window.addEventListener('resize', onWindowResize, false);
+
+  }
+
+  function transform(targets, duration) {
+
+    TWEEN.removeAll();
+
+    for (let i = 0; i < objects.length; i++) {
+
+      let object = objects[i];
+      let target = targets[i];
+
+      new TWEEN.Tween(object.position)
+        .to({ x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration)
+        .easing(TWEEN.Easing.Exponential.InOut)
+        .start();
+
+      new TWEEN.Tween(object.rotation)
+        .to({ x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration)
+        .easing(TWEEN.Easing.Exponential.InOut)
+        .start();
+
+    }
+
+    new TWEEN.Tween(this)
+      .to({}, duration * 2)
+      .onUpdate(render)
+      .start();
+
+  }
+
+  function onWindowResize() {
+
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+
+  }
+
+  function animate() {
+
+    requestAnimationFrame(animate);
+
+    TWEEN.update();
+    controls.update();
+
+  }
+
+  function render() {
+
+    renderer.render(scene, camera);
+
+  }
+
+  // 说明：用 JavaScript 实现网页图片等比例缩放
+  function resizeImg(image, distWidth, distHeight) {
+    srcWidth = image.width;
+    srcHeight = image.height;
+    let ratio = 1;
+    if (srcWidth > 0 && srcHeight > 0) {
+      if (srcWidth / srcHeight >= distWidth / distHeight) {
+        if (srcWidth > distWidth) {
+          ratio = distWidth / srcWidth;
+        }
+      }
+      else {
+        if (srcHeight > distHeight) {
+          ratio = distHeight / srcHeight;
+        }
+      }
+    }
+    let width = srcWidth * ratio;
+    let heigh = srcHeight * ratio;
+
+    image.style.width = width.toString() + 'px';
+    image.style.height = heigh.toString() + 'px';
+
+    if (width < distWidth)
+      image.style.paddingLeft = ((distWidth - width) / 2).toString() + 'px';
+
+    if (heigh < distHeight)
+      image.style.paddingTop = ((distHeight - heigh) / 2).toString() + 'px';
+  }
+
+  //获得指定文件夹图片名称列表，同时设置图片的位置
+  function getImgs() {
+
+    let arrFiles = new Array()
+    let urlArr = new Array(imgLength).fill(1).map((v) => {
+      let i = Math.ceil(Math.random() * 18 + 1)
+      return `./img/photo/${i}.jpg`
+    })
+
+    function preload() {
+
+      for (let i = 0; i < urlArr.length; i++) {
+
+        arrFiles[i] = new Image()
+
+        arrFiles[i].src = urlArr[i]
+
+      }
+
+    }
+    preload()
+
+
+    for (let i = 0; i < arrFiles.length; i++) {
+      let file = [];
+      file[0] = arrFiles[i].src
+      file[1] = locationMap[i][0];
+      file[2] = locationMap[i][1];
+      table[i] = file;
+    }
+  }
+
+  function isBrowser() {
+    let Sys = {};
+    let ua = navigator.userAgent.toLowerCase();
+    let s;
+    (s = ua.match(/msie ([\d.]+)/)) ? Sys.ie = s[1] :
+      (s = ua.match(/firefox\/([\d.]+)/)) ? Sys.firefox = s[1] :
+        (s = ua.match(/chrome\/([\d.]+)/)) ? Sys.chrome = s[1] :
+          (s = ua.match(/opera.([\d.]+)/)) ? Sys.opera = s[1] :
+            (s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0;
+    if (!(Sys.chrome || Sys.firefox)) {//Js判断为谷歌chrome浏览器
+      alert('3D效果仅测试浏览器：谷歌chrome、火狐firefox');
+    }
+  }
+
+</script>
+
+</html>
