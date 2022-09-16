@@ -133,14 +133,14 @@
     <script src="js/CSS3DRenderer.js"></script>
 </head>
 <body>
-<div id="container"></div>
-<div id="menu" style="display: none;">
-    <button id="table">照片墙</button>
+  <div id="container"></div>
+  <div id="menu" style="display: none;">
+    <button id="wall">照片墙</button>
     <button id="sphere">水晶球</button>
     <button id="helix">螺旋塔</button>
     <button id="grid">展览厅</button>
     <button id="fiveHundred">500</button>
-</div>
+  </div>
 </body>
 <script>
   const locationMap = {
@@ -494,40 +494,33 @@
   let timer
   const LOOP_TIME = 15000
   //建议值[18,6]
-  let table = []
+  let dataList = []
 
   let camera, scene, renderer
   let controls
 
   let objects = []
-  let targets = { table: [], sphere: [], helix: [], grid: [], fiveHundred: [] }
+  let targets = { wall: [], sphere: [], helix: [], grid: [], fiveHundred: [] }
 
   //		    isBrowser();
 
   getImgs()
   init()
   animate()
-
-  function init() {
-
-    camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000)
-    camera.position.z = 3000
-
-    scene = new THREE.Scene()
-
-    for (let i = 0; i < table.length; i++) {
+  function initScene() {
+    for (let i = 0; i < dataList.length; i++) {
 
       let element = document.createElement('div')
       element.className = 'element'
       element.style.backgroundColor = 'rgba(0,127,127,' + (Math.random() * 0.5 + 0.25) + ')'
 
       let a = document.createElement('a')
-      a.href = table[i][0]
+      a.href = dataList[i][0]
       a.setAttribute('data-lightbox', 'roadtrip')
       a.setAttribute('title', a.href.substr(a.href.lastIndexOf('/') + 1))
 
       let image = new Image()
-      image.src = table[i][0]
+      image.src = dataList[i][0]
 
       a.appendChild(image)
 
@@ -541,20 +534,29 @@
 
       objects.push(object)
 
-      object = new THREE.Object3D()
-      object.position.x = (table[i] [1] * 140) - 1330
-      object.position.y = -(table[i] [2] * 180) + 990
-      targets.table.push(object)
-
       image.addEventListener('load', function (event) {
         resizeImg(this, 120, 160)
       }, false)
 
     }
+  }
 
+  function initWall() {
+    targets.wall = []
+    for (let i = 0, l = objects.length; i < l; i++) {
+      let obj = new THREE.Object3D()
+      obj.position.x = (dataList[i][1] * 140) - 1330
+      obj.position.y = -(dataList[i][2] * 180) + 990
+      targets.wall.push(obj)
+    }
+    
+  }
+
+  function initSphere() {
     // sphere
 
     let vector = new THREE.Vector3()
+    targets.sphere = []
 
     for (let i = 0, l = objects.length; i < l; i++) {
 
@@ -575,9 +577,14 @@
 
     }
 
+    
+  }
+  
+  function initHelix() {
     // helix
 
     vector = new THREE.Vector3()
+    targets.helix = []
 
     for (let i = 0, l = objects.length; i < l; i++) {
 
@@ -599,8 +606,12 @@
 
     }
 
+    
+  }
+  
+  function initGrid() {
     // grid
-
+    targets.grid = []
     for (let i = 0; i < objects.length; i++) {
 
       let object = new THREE.Object3D()
@@ -613,18 +624,36 @@
 
     }
 
+  }
+
+  function initFiveHundeied() {
     // fiveHundred
+    targets.fiveHundred = []
     for (let i = 0; i < objects.length; i++) {
 
       let object = new THREE.Object3D()
-      object.position.x = (table[i][3] * 140) - 2330;
-      object.position.y = - (table[i][4] * 180) + 1290;
+      object.position.x = (dataList[i][3] * 140) - 2330;
+      object.position.y = - (dataList[i][4] * 180) + 1290;
       object.position.z = 0
 
       targets.fiveHundred.push(object)
 
     }
 
+  }
+  
+  function init() {
+
+    camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000)
+    camera.position.z = 3000
+    scene = new THREE.Scene()
+
+    initScene()
+    initWall()
+    initHelix()
+    initSphere()
+    initGrid()
+    initFiveHundeied()
     renderer = new THREE.CSS3DRenderer()
     renderer.setSize(window.innerWidth, window.innerHeight)
     renderer.domElement.style.position = 'absolute'
@@ -638,10 +667,10 @@
     controls.maxDistance = 6000
     controls.addEventListener('change', render)
 
-    button = document.getElementById('table')
+    button = document.getElementById('wall')
     button.addEventListener('click', function (event) {
 
-      transform(targets.table, 2000)
+      transform(targets.wall, 2000)
 
     }, false)
 
@@ -676,12 +705,12 @@
     }, false)
 
     let i = 0
-    let loopArrays = ['table','sphere', 'helix', 'grid', 'fiveHundred']
-    transform(targets[loopArrays[i]], 5000) // 第一个 'table'
+    let loopArrays = ['wall', 'sphere', 'helix', 'grid', 'fiveHundred']
+    transform(targets[loopArrays[i]], 5000) // 第一个 'wall'
     if (timer) clearInterval(timer)
     timer = setInterval(() => {
       i++
-      if( i>= loopArrays.length) i = 0
+      if (i >= loopArrays.length) i = 0
       transform(targets[loopArrays[i]], 5000)
     }, LOOP_TIME)
 
@@ -802,7 +831,7 @@
       file[2] = row
       file[3] = locationMap[i][0]
       file[4] = locationMap[i][1]
-      table[i] = file
+      dataList[i] = file
       if (col > 18) {
         col = 1
         row++
@@ -826,4 +855,5 @@
   }
 
 </script>
+
 </html>
