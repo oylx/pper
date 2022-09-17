@@ -502,12 +502,8 @@
   let objects = []
   let targets = { wall: [], sphere: [], helix: [], grid: [], fiveHundred: [] }
 
-  //		    isBrowser();
-
-  getImgs()
-  init()
-  animate()
-  function initScene() {
+  function initScene(isDeleteSceneAll) {
+    // if (isDeleteSceneAll) scene.removeAll()
     for (let i = 0; i < dataList.length; i++) {
       let element = document.createElement('div')
       element.className = 'element'
@@ -544,6 +540,7 @@
     targets.wall = []
     for (let i = 0, l = objects.length; i < l; i++) {
       let obj = new THREE.Object3D()
+      console.log(dataList[i]);
       obj.position.x = (dataList[i][1] * 140) - 1330
       obj.position.y = -(dataList[i][2] * 180) + 990
       targets.wall.push(obj)
@@ -658,7 +655,6 @@
     renderer.domElement.style.position = 'absolute'
     document.getElementById('container').appendChild(renderer.domElement)
 
-    //
 
     controls = new THREE.TrackballControls(camera, renderer.domElement)
     controls.rotateSpeed = 0.5
@@ -838,20 +834,22 @@
     }
   }
 
-  //判断浏览器类型
-  function isBrowser() {
-    let Sys = {}
-    let ua = navigator.userAgent.toLowerCase()
-    let s;
-    (s = ua.match(/msie ([\d.]+)/)) ? Sys.ie = s[1] :
-      (s = ua.match(/firefox\/([\d.]+)/)) ? Sys.firefox = s[1] :
-        (s = ua.match(/chrome\/([\d.]+)/)) ? Sys.chrome = s[1] :
-          (s = ua.match(/opera.([\d.]+)/)) ? Sys.opera = s[1] :
-            (s = ua.match(/version\/([\d.]+).*safari/)) ? Sys.safari = s[1] : 0
-    if (!(Sys.chrome || Sys.firefox)) {//Js判断为谷歌chrome浏览器
-      alert('3D效果仅测试浏览器：谷歌chrome、火狐firefox')
-    }
+
+  function loop() {
+    setTimeout(() => {
+      const isLoadRealImage = true
+      getImgs(isLoadRealImage)
+      init()
+    }, 10000)
   }
+
+  function load() {
+    getImgs()
+    init()
+    animate()
+    // loop()
+}
+load()
 
 </script>
 
