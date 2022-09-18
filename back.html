@@ -501,9 +501,18 @@
 
   let objects = []
   let targets = { wall: [], sphere: [], helix: [], grid: [], fiveHundred: [] }
+  let loadMore = false
+  let arrFiles = []
 
   function initScene(isDeleteSceneAll) {
-    // if (isDeleteSceneAll) scene.removeAll()
+    if (isDeleteSceneAll) {
+      for( let i = scene.children.length - 1; i >= 0; i--) {
+        let obj = scene.children[i];
+        scene.remove(obj);
+      }
+      console.log(scene)
+      objects = []
+    }
     for (let i = 0; i < dataList.length; i++) {
       let element = document.createElement('div')
       element.className = 'element'
@@ -540,12 +549,10 @@
     targets.wall = []
     for (let i = 0, l = objects.length; i < l; i++) {
       let obj = new THREE.Object3D()
-      console.log(dataList[i]);
       obj.position.x = (dataList[i][1] * 140) - 1330
       obj.position.y = -(dataList[i][2] * 180) + 990
       targets.wall.push(obj)
     }
-    
   }
 
   function initSphere() {
@@ -573,9 +580,9 @@
 
     }
 
-    
+
   }
-  
+
   function initHelix() {
     // helix
 
@@ -602,9 +609,9 @@
 
     }
 
-    
+
   }
-  
+
   function initGrid() {
     // grid
     targets.grid = []
@@ -622,7 +629,7 @@
 
   }
 
-  function initFiveHundeied() {
+  function initFiveHundred() {
     // fiveHundred
     targets.fiveHundred = []
     for (let i = 0; i < objects.length; i++) {
@@ -637,23 +644,35 @@
     }
 
   }
-  
-  function init() {
+
+  function resetContainer(isDeleteSceneAll) {
+    let containerEle = document.getElementById('container')
+    if (isDeleteSceneAll) {
+      while(containerEle.hasChildNodes()) //当elem下还存在子节点时 循环继续
+      {
+        containerEle.removeChild(containerEle.firstChild);
+      }
+    }
+    containerEle.appendChild(renderer.domElement)
+  }
+
+  function init(isDeleteSceneAll= false) {
 
     camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000)
     camera.position.z = 3000
     scene = new THREE.Scene()
 
-    initScene()
+    initScene(isDeleteSceneAll)
     initWall()
     initHelix()
     initSphere()
     initGrid()
-    initFiveHundeied()
+    initFiveHundred()
     renderer = new THREE.CSS3DRenderer()
     renderer.setSize(window.innerWidth, window.innerHeight)
     renderer.domElement.style.position = 'absolute'
-    document.getElementById('container').appendChild(renderer.domElement)
+
+    resetContainer(isDeleteSceneAll)
 
 
     controls = new THREE.TrackballControls(camera, renderer.domElement)
@@ -662,35 +681,38 @@
     controls.maxDistance = 6000
     controls.addEventListener('change', render)
 
-    button = document.getElementById('wall')
-    button.addEventListener('click', function (event) {
+    addButtonClickEvent()
+    loopTransfer()
+  }
+
+  function addButtonClickEvent() {
+    let button = document.getElementById('wall')
+    button.addEventListener('click', function () {
 
       transform(targets.wall, 2000)
 
     }, false)
 
     button = document.getElementById('sphere')
-    button.addEventListener('click', function (event) {
+    button.addEventListener('click', function () {
 
       transform(targets.sphere, 2000)
 
     }, false)
 
     button = document.getElementById('helix')
-    button.addEventListener('click', function (event) {
+    button.addEventListener('click', function () {
 
       transform(targets.helix, 2000)
 
     }, false)
 
     button = document.getElementById('grid')
-    button.addEventListener('click', function (event) {
+    button.addEventListener('click', function () {
 
       transform(targets.grid, 2000)
 
     }, false)
-
-
 
     button = document.getElementById('fiveHundred')
     button.addEventListener('click', function (event) {
@@ -698,7 +720,9 @@
       transform(targets.fiveHundred, 2000)
 
     }, false)
+  }
 
+  function loopTransfer() {
     let i = 0
     let loopArrays = ['wall', 'sphere', 'helix', 'grid', 'fiveHundred']
     transform(targets[loopArrays[i]], 5000) // 第一个 'wall'
@@ -710,7 +734,6 @@
     }, LOOP_TIME)
 
     window.addEventListener('resize', onWindowResize, false)
-
   }
 
   function transform(targets, duration) {
@@ -794,34 +817,30 @@
       image.style.paddingTop = ((distHeight - heigh) / 2).toString() + 'px'
   }
 
-  //获得指定文件夹图片名称列表，同时设置图片的位置
-  function getImgs() {
+  function getImgs(isLoadRealImage = false) {
+    let addImgList = []
 
-    let arrfiles = new Array()
-    let urlArr = new Array(imgLength).fill(1).map((v) => {
-      let i = Math.ceil(Math.random() * 18 + 1)
-      return `./img/photo/${i}.jpg`
-    })
-
-    function preload() {
-
-      for (let i = 0; i < urlArr.length; i++) {
-
-        arrfiles[i] = new Image()
-
-        arrfiles[i].src = urlArr[i]
-
+    if (!isLoadRealImage) {
+      arrFiles= new Array(imgLength).fill(1).map((v) => {
+        return ''
+      })
+    } else {
+      // 随机写了50张图
+      addImgList= new Array(50).fill(1).map((v) => {
+        let i =  Math.ceil(Math.random() * 18 + 1)
+        return `./img/photo/${i}.jpg`
+      })
+      for(let i =0; i< arrFiles.length; i++) {
+        if( arrFiles[i] === '' && addImgList.length) arrFiles[i] = addImgList.splice(0,1)
       }
-
+      console.log(arrFiles)
     }
-
-    preload()
 
     let row = 1
     let col = 1
-    for (let i = 0; i < arrfiles.length; i++) {
+    for (let i = 0; i < arrFiles.length; i++) {
       let file = []
-      file[0] = arrfiles[i].src
+      file[0] = arrFiles[i]
       file[1] = col++
       file[2] = row
       file[3] = locationMap[i][0]
@@ -834,22 +853,21 @@
     }
   }
 
-
-  function loop() {
-    setTimeout(() => {
-      const isLoadRealImage = true
-      getImgs(isLoadRealImage)
-      init()
-    }, 10000)
+  function load(flag = false) {
+    getImgs(flag)
+    init(flag)
+    animate()
   }
 
-  function load() {
-    getImgs()
-    init()
-    animate()
-    // loop()
-}
-load()
+
+  // 第一次
+  load(loadMore)
+  setInterval(() => {
+    // 第二次开始，将状态置为true:重复加载img和scene
+    loadMore = true
+    load(loadMore)
+    console.log('轮询')
+  }, 20000)
 
 </script>
 
