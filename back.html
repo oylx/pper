@@ -724,7 +724,7 @@
 
   function loopTransfer() {
     let i = 0
-    let loopArrays = ['wall', 'sphere', 'helix', 'grid', 'fiveHundred']
+    let loopArrays = ['sphere', 'fiveHundred']
     transform(targets[loopArrays[i]], 5000) // 第一个 'wall'
     if (timer) clearInterval(timer)
     timer = setInterval(() => {
@@ -820,11 +820,15 @@
   function getImgs(isLoadRealImage = false) {
     let addImgList = []
 
+    // 第一次
     if (!isLoadRealImage) {
       arrFiles= new Array(imgLength).fill(1).map((v) => {
         return ''
       })
-    } else {
+    }
+
+    // 后续
+    if(isLoadRealImage) {
       // 随机写了50张图
       addImgList= new Array(50).fill(1).map((v) => {
         let i =  Math.ceil(Math.random() * 18 + 1)
@@ -833,9 +837,14 @@
       for(let i =0; i< arrFiles.length; i++) {
         if( arrFiles[i] === '' && addImgList.length) arrFiles[i] = addImgList.splice(0,1)
       }
+      console.log('arrFiles')
       console.log(arrFiles)
     }
 
+    handleArrFiles()
+  }
+
+  function handleArrFiles() {
     let row = 1
     let col = 1
     for (let i = 0; i < arrFiles.length; i++) {
